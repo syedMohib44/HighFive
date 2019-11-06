@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private int scored = 0;
     private Text scorePopUp, scoreText;
     Color c;
+    public Animator anim;
 
     void Start()
     {
@@ -27,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     float absVal, rotateVal;
     bool rotate;
     RaycastHit hit;
+    Quaternion rot;
     void FixedUpdate()
     {
         absVal = 3;
@@ -34,28 +36,34 @@ public class PlayerMovement : MonoBehaviour
         float moveVertical = Input.GetAxis("Vertical");
         Vector3 movement = new Vector3(0, 0.0f, moveVertical * speed);
 
+        rot = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, 0), (50 * Time.deltaTime));
         //rotateTo += 5 * Time.deltaTime;
 
         //absVal = Mathf.MoveTowards(absVal, 0, Time.deltaTime * 5 * moveHorizontal);
+        if (moveVertical > 0 || moveVertical < 0)
+            anim.SetBool("IsWalking", true);
+        else
+            anim.SetBool("IsWalking", false);
 
-        if (Physics.Raycast(playerPalm[0].transform.position, playerPalm[0].transform.TransformDirection(Vector3.forward), out hit, 0.5f, LayerMask.GetMask("SignBoard"))/*playerPalm[0].bounds.Intersects(signBoard[0].bounds)*/ && rotate == false)
-        {
-            if(rotateTo <= -360)
-                rotateTo = 0;
+        // commented on 3/11/2019
+        //if (Physics.Raycast(playerPalm[0].transform.position, playerPalm[0].transform.TransformDirection(Vector3.forward), out hit, 0.5f, LayerMask.GetMask("SignBoard"))/*playerPalm[0].bounds.Intersects(signBoard[0].bounds)*/ && rotate == false)
+        //{
+        //    if(rotateTo <= -360)
+        //        rotateTo = 0;
 
-            rotateTo -= 90;
-            rotateVal = 5;
-            tempRot = rotateTo + 360;
+        //    rotateTo -= 90;
+        //    rotateVal = 5;
+        //    tempRot = rotateTo + 360;
 
-            rotate = true;
-        }
+        //    rotate = true;
+        //}
 
         if (rotate)
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(-90f, rotateTo, 0), (20 * Time.deltaTime));
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(-90f, rotateTo, 0), (50 * Time.deltaTime));
         }
 
- 
+
         Debug.Log(tempRot + " TempTRot");
 
         if (((int)transform.localEulerAngles.z == tempRot && rotate))
@@ -74,19 +82,31 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            if (!Physics.Raycast(playerPalm[0].transform.position, playerPalm[0].transform.TransformDirection(Vector3.left), out hit, 0.5f, LayerMask.GetMask("FootPathL")))
-            {
-                transform.Translate(-absVal * Time.deltaTime, 0, 0);
-            }
+            //if(anim.GetBool("IsWalking"))
+            //    anim.SetBool("LeftKey", true);
+            //if (!Physics.Raycast(playerPalm[0].transform.position, playerPalm[0].transform.TransformDirection(Vector3.left), out hit, 0.5f, LayerMask.GetMask("FootPathL")))
+            //{
+            transform.Translate(-absVal * Time.deltaTime, 0, 0);
+            rot = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, -15, 0), (50 * Time.deltaTime));
+            //}
         }
+        else
+            anim.SetBool("LeftKey", false);
 
         if (Input.GetKey(KeyCode.RightArrow))
+        //{
+        //    if (anim.GetBool("IsWalking"))
+        //        anim.SetBool("RightKey", true);
+        //    if (!Physics.Raycast(playerPalm[1].transform.position, playerPalm[1].transform.TransformDirection(Vector3.right), out hit, 0.5f, LayerMask.GetMask("FootPathR")))
         {
-            if (!Physics.Raycast(playerPalm[1].transform.position, playerPalm[1].transform.TransformDirection(Vector3.right), out hit, 0.5f, LayerMask.GetMask("FootPathR")))
-            {
-                transform.Translate(absVal * Time.deltaTime, 0, 0);
-            }
+            transform.Translate(absVal * Time.deltaTime, 0, 0);
+            rot = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 15, 0), (50 * Time.deltaTime));
         }
+        //}
+        else
+            anim.SetBool("RightKey", false);
+        transform.rotation = rot;
+
 
         //if(Input.GetKey(KeyCode.LeftArrow))
         //    if (!playerPalm[0].bounds.Intersects(pathBound[0].bounds))
@@ -97,10 +117,14 @@ public class PlayerMovement : MonoBehaviour
         //        transform.Translate(absVal * Time.deltaTime, 0, 0);
 
 
-        if (Physics.Raycast(playerPalm[0].transform.position, playerPalm[0].transform.TransformDirection(Vector3.forward), out hit, 0.1f, LayerMask.GetMask("RightHand"))/*playerPalm[0].bounds.Intersects(crowdPalm[1].bounds)*/)
-        {
-            SetscorePopUp(5);
-        }
+        //commentd on 3/11/2019
+        //if (Physics.Raycast(playerPalm[0].transform.position, playerPalm[0].transform.TransformDirection(Vector3.forward), out hit, 0.1f, LayerMask.GetMask("RightHand"))/*playerPalm[0].bounds.Intersects(crowdPalm[1].bounds)*/)
+        //{
+        //    SetscorePopUp(5);
+        //}
+        //till here...
+
+
         //if (playerPalm[1].bounds.Intersects(crowdPalm[0].bounds))
         //{
         //    SetscorePopUp(5);
@@ -108,10 +132,10 @@ public class PlayerMovement : MonoBehaviour
         //}
 
         scorePopUpAnim();
-        transform.Translate(0, moveVertical * speed * Time.deltaTime, 0);
+        transform.Translate(0, 0, moveVertical * -speed * Time.deltaTime);
     }
 
-        int count;
+    int count;
     public void SetColliders(BoxCollider[] playerPalm)
     {
         this.playerPalm = playerPalm;

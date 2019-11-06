@@ -10,23 +10,24 @@ public class HighFive : MonoBehaviour
     {
         playerPalm = gameObject.GetComponentsInChildren<BoxCollider>();
 
-        playerPalm = arrangeColliders(playerPalm, "LeftHand", "RightHand");
+        //playerPalm = arrangeColliders(playerPalm, "LeftHand", "RightHand");
 
         gameObject.GetComponent<PlayerMovement>().SetColliders(playerPalm);
     }
 
    private BoxCollider tempCollider;
-    private BoxCollider[] arrangeColliders(BoxCollider[] Colliders, string firstName, string secondName)
-    {
-        if (Colliders[0].name == firstName)
-            return Colliders;
+    //commented on 3/11/2019
+    //private BoxCollider[] arrangeColliders(BoxCollider[] Colliders, string firstName, string secondName)
+    //{
+    //    if (Colliders[0].name == firstName)
+    //        return Colliders;
 
-        if (Colliders[0].name == secondName)
-        {
-            tempCollider = Colliders[0];
-            Colliders[0] = Colliders[1];
-            Colliders[1] = tempCollider;            
-        }
-        return Colliders;
-    }
+    //    if (Colliders[0].name == secondName)
+    //    {
+    //        tempCollider = Colliders[0];
+    //        Colliders[0] = Colliders[1];
+    //        Colliders[1] = tempCollider;            
+    //    }
+    //    return Colliders;
+    //}
 }
